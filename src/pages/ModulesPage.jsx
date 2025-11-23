@@ -1,24 +1,23 @@
+// src/pages/ModulesPage.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = "https://super-backend-bzin.onrender.com";
 
-export default function ModulesPage() {
+const ModulesPage = () => {
   const [modules, setModules] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchModules = async () => {
       try {
         const res = await axios.get(`${API_URL}/api/modules`);
         setModules(res.data);
+        setLoading(false);
       } catch (err) {
-        console.error("Error fetching modules:", err);
-        setError("Failed to load modules from backend.");
-      } finally {
+        console.error(err);
+        setError("Failed to fetch modules");
         setLoading(false);
       }
     };
@@ -27,30 +26,32 @@ export default function ModulesPage() {
   }, []);
 
   if (loading) return <p>Loading modules...</p>;
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <div style={{ padding: "20px" }}>
       <h1>Modules</h1>
-      <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
-        {modules.map((mod) => (
+      <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
+        {modules.map((module) => (
           <div
-            key={mod._id}
+            key={module._id}
             style={{
-              background: "#fff",
-              padding: "30px",
-              borderRadius: "12px",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-              flex: "1 1 200px",
+              padding: "15px",
+              border: "1px solid #ccc",
+              borderRadius: "8px",
+              minWidth: "150px",
               textAlign: "center",
               cursor: "pointer",
+              backgroundColor: "#f0f8ff",
+              boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
             }}
-            onClick={() => navigate(`/dashboard/modules/${mod._id}/categories`)}
           >
-            {mod.name}
+            {module.name}
           </div>
         ))}
       </div>
     </div>
   );
-}
+};
+
+export default ModulesPage;
