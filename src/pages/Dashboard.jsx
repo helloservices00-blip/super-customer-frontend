@@ -17,7 +17,7 @@ export default function Dashboard({ user, onLogout }) {
   ];
 
   return (
-    <div style={{ minHeight: "100vh", fontFamily: "Arial, sans-serif", background: "linear-gradient(135deg,#f6d365,#fda085)", padding: "20px" }}>
+    <div style={{ minHeight: "100vh", fontFamily: "Arial,sans-serif", background: "linear-gradient(135deg,#f6d365,#fda085)", padding: "20px" }}>
       <nav style={navStyle}>
         <h2 style={{ color: "#4CAF50" }}>Multi-Vendor App</h2>
 
@@ -49,7 +49,7 @@ export default function Dashboard({ user, onLogout }) {
         </div>
 
         {/* Desktop nav */}
-        <div style={{ ...navLinksStyleDesktop }}>
+        <div style={navLinksStyleDesktop}>
           {navItems.map(item => (
             <Link
               key={item.name}
