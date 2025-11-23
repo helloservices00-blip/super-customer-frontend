@@ -4,6 +4,7 @@ import { FiHome, FiUser, FiShoppingCart, FiLogOut, FiMenu, FiX } from "react-ico
 import HomePage from "./HomePage.jsx";
 import AccountPage from "./AccountPage.jsx";
 import CartPage from "./CartPage.jsx";
+import ModulesPage from "./ModulesPage.jsx";
 
 export default function Dashboard({ user, onLogout }) {
   const location = useLocation();
