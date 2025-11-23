@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-function SignupPage() {
+export default function SignupPage() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -20,21 +20,17 @@ function SignupPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password }),
       });
-
       const data = await res.json();
 
-      if (!res.ok) {
-        setMessage(data.message || "Signup failed");
-      } else {
-        setMessage("Signup successful! Redirecting to login...");
-        setTimeout(() => navigate("/"), 2000);
+      if (!res.ok) setMessage(data.message || "Signup failed");
+      else {
+        setMessage("Signup successful! Redirecting...");
+        setTimeout(()=>navigate("/"),2000);
       }
     } catch {
-      setMessage("Network error. Please try again.");
+      setMessage("Network error.");
     }
   };
-
-  const goLogin = () => navigate("/");
 
   return (
     <div style={containerStyle}>
@@ -46,9 +42,9 @@ function SignupPage() {
           <input type="password" placeholder="Password" value={password} onChange={e=>setPassword(e.target.value)} required style={inputStyle} />
           <button type="submit" style={buttonStyle}>Sign Up</button>
         </form>
-        {message && <p style={{color: message.includes("successful") ? "green":"red"}}>{message}</p>}
+        {message && <p style={{color: message.includes("successful")?"green":"red"}}>{message}</p>}
         <p>
-          Already have an account? <button onClick={goLogin} style={linkStyle}>Login</button>
+          Already have an account? <button onClick={()=>navigate("/")} style={linkStyle}>Login</button>
         </p>
       </div>
     </div>
@@ -56,10 +52,8 @@ function SignupPage() {
 }
 
 const containerStyle = { display:"flex", justifyContent:"center", alignItems:"center", minHeight:"100vh", background:"linear-gradient(135deg,#f6d365,#fda085)" };
-const cardStyle = { background:"#fff", padding:"40px", borderRadius:"16px", textAlign:"center", width:"100%", maxWidth:"400px" };
+const cardStyle = { background:"#fff", padding:"40px", borderRadius:"16px", width:"100%", maxWidth:"400px", textAlign:"center" };
 const formStyle = { display:"flex", flexDirection:"column", gap:"15px" };
 const inputStyle = { padding:"12px", borderRadius:"12px", border:"1px solid #ccc", fontSize:"16px" };
 const buttonStyle = { padding:"12px", borderRadius:"12px", border:"none", background:"#fda085", color:"#fff", fontWeight:"bold", cursor:"pointer" };
 const linkStyle = { border:"none", background:"none", color:"#fda085", cursor:"pointer" };
-
-export default SignupPage;
