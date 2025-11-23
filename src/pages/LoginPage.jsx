@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-function LoginPage({ onLogin }) {
+export default function LoginPage({ onLogin }) {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,23 +19,19 @@ function LoginPage({ onLogin }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-
       const data = await res.json();
 
-      if (!res.ok) {
-        setMessage(data.message || "Login failed");
-      } else {
+      if (!res.ok) setMessage(data.message || "Login failed");
+      else {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
         onLogin(data.user);
-        navigate("/dashboard/home"); // smooth navigation
+        navigate("/dashboard/home");
       }
     } catch {
-      setMessage("Network error. Please try again.");
+      setMessage("Network error.");
     }
   };
-
-  const goSignup = () => navigate("/signup");
 
   return (
     <div style={containerStyle}>
@@ -48,7 +44,7 @@ function LoginPage({ onLogin }) {
         </form>
         {message && <p style={{color:"red"}}>{message}</p>}
         <p>
-          Don't have an account? <button onClick={goSignup} style={linkStyle}>Sign Up</button>
+          Don't have an account? <button onClick={()=>navigate("/signup")} style={linkStyle}>Sign Up</button>
         </p>
       </div>
     </div>
@@ -56,10 +52,8 @@ function LoginPage({ onLogin }) {
 }
 
 const containerStyle = { display:"flex", justifyContent:"center", alignItems:"center", minHeight:"100vh", background:"linear-gradient(135deg,#667eea,#764ba2)" };
-const cardStyle = { background:"#fff", padding:"40px", borderRadius:"16px", textAlign:"center", width:"100%", maxWidth:"400px" };
+const cardStyle = { background:"#fff", padding:"40px", borderRadius:"16px", width:"100%", maxWidth:"400px", textAlign:"center" };
 const formStyle = { display:"flex", flexDirection:"column", gap:"15px" };
 const inputStyle = { padding:"12px", borderRadius:"12px", border:"1px solid #ccc", fontSize:"16px" };
 const buttonStyle = { padding:"12px", borderRadius:"12px", border:"none", background:"#764ba2", color:"#fff", fontWeight:"bold", cursor:"pointer" };
 const linkStyle = { border:"none", background:"none", color:"#764ba2", cursor:"pointer" };
-
-export default LoginPage;
