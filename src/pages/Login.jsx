@@ -1,13 +1,38 @@
 import React, { useState } from "react";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function LoginPage({ switchToSignup }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Call backend login API
-    console.log("Logging in:", email, password);
+    setError("");
+
+    try {
+      const res = await fetch(`${API_URL}/api/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.message || "Login failed");
+      } else {
+        // Store JWT token in localStorage
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+
+        // Redirect to dashboard (adjust as needed)
+        window.location.href = "/dashboard";
+      }
+    } catch (err) {
+      setError("Network error. Please try again.");
+    }
   };
 
   return (
@@ -42,6 +67,9 @@ function LoginPage({ switchToSignup }) {
           Login
         </button>
       </form>
+
+      {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}
+
       <p style={{ marginTop: "15px" }}>
         Don't have an account? <button onClick={switchToSignup} style={{ color: "#4CAF50", border: "none", background: "none", cursor: "pointer" }}>Sign Up</button>
       </p>
