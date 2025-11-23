@@ -1,17 +1,20 @@
 import React, { useState } from "react";
 import { Routes, Route, Link, useLocation, Navigate } from "react-router-dom";
-import { FiHome, FiUser, FiShoppingCart, FiLogOut, FiMenu, FiX } from "react-icons/fi";
+import { FiHome, FiUser, FiShoppingCart, FiLogOut, FiMenu, FiX, FiGrid } from "react-icons/fi";
 import HomePage from "./HomePage.jsx";
 import AccountPage from "./AccountPage.jsx";
 import CartPage from "./CartPage.jsx";
 import ModulesPage from "./ModulesPage.jsx";
+import CategoriesPage from "./CategoriesPage.jsx";
+import ProductsPage from "./ProductsPage.jsx";
 
 export default function Dashboard({ user, onLogout }) {
   const location = useLocation();
-  const current = location.pathname.split("/").pop();
+  const path = location.pathname.split("/")[2]; // dashboard/:page
   const [menuOpen, setMenuOpen] = useState(false);
 
   const navItems = [
+    { name: "modules", icon: <FiGrid />, label: "Modules" },
     { name: "home", icon: <FiHome />, label: "Home" },
     { name: "account", icon: <FiUser />, label: "Account" },
     { name: "cart", icon: <FiShoppingCart />, label: "Cart" },
@@ -22,21 +25,21 @@ export default function Dashboard({ user, onLogout }) {
       <nav style={navStyle}>
         <h2 style={{ color: "#4CAF50" }}>Multi-Vendor App</h2>
 
-        {/* Hamburger menu for mobile */}
+        {/* Mobile Hamburger */}
         <div style={{ display: "flex", alignItems: "center" }}>
           <button onClick={() => setMenuOpen(!menuOpen)} style={hamburgerStyle}>
             {menuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
           </button>
 
-          <div style={{ ...navLinksStyle, display: menuOpen ? "flex" : "none", flexDirection: "column" }}>
+          <div style={{ ...navLinksStyleMobile, display: menuOpen ? "flex" : "none", flexDirection: "column" }}>
             {navItems.map(item => (
               <Link
                 key={item.name}
                 to={item.name}
                 style={{
                   ...navBtnStyle,
-                  background: current === item.name ? "#4CAF50" : "#fff",
-                  color: current === item.name ? "#fff" : "#4CAF50",
+                  background: path === item.name ? "#4CAF50" : "#fff",
+                  color: path === item.name ? "#fff" : "#4CAF50",
                 }}
                 onClick={() => setMenuOpen(false)}
               >
@@ -57,8 +60,8 @@ export default function Dashboard({ user, onLogout }) {
               to={item.name}
               style={{
                 ...navBtnStyle,
-                background: current === item.name ? "#4CAF50" : "#fff",
-                color: current === item.name ? "#fff" : "#4CAF50",
+                background: path === item.name ? "#4CAF50" : "#fff",
+                color: path === item.name ? "#fff" : "#4CAF50",
               }}
             >
               {item.icon} <span style={{ marginLeft: "6px" }}>{item.label}</span>
@@ -71,16 +74,15 @@ export default function Dashboard({ user, onLogout }) {
       </nav>
 
       <Routes>
-  <Route path="" element={<Navigate to="modules" />} />
-  <Route path="modules" element={<ModulesPage />} />
-  <Route path="modules/:moduleId/categories" element={<CategoriesPage />} />
-  <Route path="modules/:moduleId/categories/:categoryId/products" element={<ProductsPage />} />
-  <Route path="home" element={<HomePage user={user} />} />
-  <Route path="account" element={<AccountPage user={user} />} />
-  <Route path="cart" element={<CartPage />} />
-  <Route path="*" element={<Navigate to="modules" />} />
-</Routes>
-
+        <Route path="" element={<Navigate to="modules" />} />
+        <Route path="modules" element={<ModulesPage />} />
+        <Route path="modules/:moduleId/categories" element={<CategoriesPage />} />
+        <Route path="modules/:moduleId/categories/:categoryId/products" element={<ProductsPage />} />
+        <Route path="home" element={<HomePage user={user} />} />
+        <Route path="account" element={<AccountPage user={user} />} />
+        <Route path="cart" element={<CartPage />} />
+        <Route path="*" element={<Navigate to="modules" />} />
+      </Routes>
     </div>
   );
 }
@@ -111,7 +113,7 @@ const navBtnStyle = {
   transition: "all 0.2s",
 };
 
-const navLinksStyle = {
+const navLinksStyleMobile = {
   position: "absolute",
   top: "60px",
   right: "20px",
