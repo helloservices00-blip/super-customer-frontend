@@ -1,32 +1,25 @@
 // src/pages/ModulesPage.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const API_URL = "https://super-backend-bzin.onrender.com";
 
 const ModulesPage = () => {
   const [modules, setModules] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchModules = async () => {
       try {
         const res = await axios.get(`${API_URL}/api/modules`);
         setModules(res.data);
-        setLoading(false);
       } catch (err) {
         console.error(err);
-        setError("Failed to fetch modules");
-        setLoading(false);
       }
     };
-
     fetchModules();
   }, []);
-
-  if (loading) return <p>Loading modules...</p>;
-  if (error) return <p>{error}</p>;
 
   return (
     <div style={{ padding: "20px" }}>
@@ -43,8 +36,8 @@ const ModulesPage = () => {
               textAlign: "center",
               cursor: "pointer",
               backgroundColor: "#f0f8ff",
-              boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
             }}
+            onClick={() => navigate(`/modules/${module._id}/vendors`)}
           >
             {module.name}
           </div>
