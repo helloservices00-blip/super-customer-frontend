@@ -1,18 +1,18 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-function SignupPage({ switchToLogin }) {
+function SignupPage() {
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
 
   const handleSignup = async (e) => {
     e.preventDefault();
     setMessage("");
-    setLoading(true);
 
     try {
       const res = await fetch(`${API_URL}/api/auth/signup`, {
@@ -23,82 +23,43 @@ function SignupPage({ switchToLogin }) {
 
       const data = await res.json();
 
-      console.log("Signup response:", res.status, data); // log for debugging
-
       if (!res.ok) {
-        // If backend returns error, show message
         setMessage(data.message || "Signup failed");
       } else {
-        setMessage("✅ Signup successful! Redirecting to login...");
-        setTimeout(() => switchToLogin(), 2000);
+        setMessage("Signup successful! Redirecting to login...");
+        setTimeout(() => navigate("/"), 2000);
       }
-    } catch (err) {
-      console.error("Network error:", err);
-      setMessage("⚠️ Network error. Please try again.");
-    } finally {
-      setLoading(false);
+    } catch {
+      setMessage("Network error. Please try again.");
     }
   };
 
+  const goLogin = () => navigate("/");
+
   return (
-    <div style={{
-      background: "#fff",
-      padding: "40px",
-      borderRadius: "12px",
-      boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
-      width: "100%",
-      maxWidth: "400px",
-      textAlign: "center"
-    }}>
-      <h2 style={{ marginBottom: "20px" }}>Sign Up</h2>
-      <form onSubmit={handleSignup} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
-        <input
-          type="text"
-          placeholder="Full Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-          style={{ padding: "12px", borderRadius: "8px", border: "1px solid #ccc" }}
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          style={{ padding: "12px", borderRadius: "8px", border: "1px solid #ccc" }}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          style={{ padding: "12px", borderRadius: "8px", border: "1px solid #ccc" }}
-        />
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            padding: "12px",
-            borderRadius: "8px",
-            border: "none",
-            background: "#4CAF50",
-            color: "#fff",
-            cursor: loading ? "not-allowed" : "pointer"
-          }}
-        >
-          {loading ? "Signing up..." : "Sign Up"}
-        </button>
-      </form>
-
-      {message && <p style={{ marginTop: "15px", color: message.includes("successful") ? "green" : "red" }}>{message}</p>}
-
-      <p style={{ marginTop: "15px" }}>
-        Already have an account? <button onClick={switchToLogin} style={{ color: "#4CAF50", border: "none", background: "none", cursor: "pointer" }}>Login</button>
-      </p>
+    <div style={containerStyle}>
+      <div style={cardStyle}>
+        <h2>Sign Up</h2>
+        <form onSubmit={handleSignup} style={formStyle}>
+          <input type="text" placeholder="Full Name" value={name} onChange={e=>setName(e.target.value)} required style={inputStyle} />
+          <input type="email" placeholder="Email" value={email} onChange={e=>setEmail(e.target.value)} required style={inputStyle} />
+          <input type="password" placeholder="Password" value={password} onChange={e=>setPassword(e.target.value)} required style={inputStyle} />
+          <button type="submit" style={buttonStyle}>Sign Up</button>
+        </form>
+        {message && <p style={{color: message.includes("successful") ? "green":"red"}}>{message}</p>}
+        <p>
+          Already have an account? <button onClick={goLogin} style={linkStyle}>Login</button>
+        </p>
+      </div>
     </div>
   );
 }
+
+const containerStyle = { display:"flex", justifyContent:"center", alignItems:"center", minHeight:"100vh", background:"linear-gradient(135deg,#f6d365,#fda085)" };
+const cardStyle = { background:"#fff", padding:"40px", borderRadius:"16px", textAlign:"center", width:"100%", maxWidth:"400px" };
+const formStyle = { display:"flex", flexDirection:"column", gap:"15px" };
+const inputStyle = { padding:"12px", borderRadius:"12px", border:"1px solid #ccc", fontSize:"16px" };
+const buttonStyle = { padding:"12px", borderRadius:"12px", border:"none", background:"#fda085", color:"#fff", fontWeight:"bold", cursor:"pointer" };
+const linkStyle = { border:"none", background:"none", color:"#fda085", cursor:"pointer" };
 
 export default SignupPage;
