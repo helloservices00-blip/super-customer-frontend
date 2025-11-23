@@ -5,18 +5,17 @@ import SignupPage from "./pages/SignupPage.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 
 function App() {
-  // Lazy load user from localStorage to prevent flicker
+  // Load user from localStorage safely
   const [user, setUser] = useState(() => {
     try {
-      const storedUser = localStorage.getItem("user");
-      return storedUser ? JSON.parse(storedUser) : null;
+      const stored = localStorage.getItem("user");
+      return stored ? JSON.parse(stored) : null;
     } catch {
       return null;
     }
   });
 
   const handleLogin = (userData) => setUser(userData);
-
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
@@ -33,12 +32,12 @@ function App() {
         path="/signup"
         element={user ? <Navigate to="/dashboard/home" /> : <SignupPage />}
       />
-      {/* * is required for nested routes inside Dashboard */}
+      {/* Parent route must have * for nested routes */}
       <Route
         path="/dashboard/*"
         element={user ? <Dashboard user={user} onLogout={handleLogout} /> : <Navigate to="/" />}
       />
-      <Route path="*" element={<Navigate to="/" />} /> {/* fallback */}
+      <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );
 }
