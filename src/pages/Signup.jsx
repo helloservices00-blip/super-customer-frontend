@@ -13,7 +13,7 @@ function SignupPage({ switchToLogin }) {
     setSuccess("");
 
     try {
-      const res = await fetch("https://your-backend.com/api/auth/signup", {
+      const res = await fetch("https://super-backend.onrender.com/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password }),
