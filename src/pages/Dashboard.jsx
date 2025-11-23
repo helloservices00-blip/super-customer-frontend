@@ -70,12 +70,16 @@ export default function Dashboard({ user, onLogout }) {
       </nav>
 
       <Routes>
-        <Route path="" element={<Navigate to="home" />} />
-        <Route path="home" element={<HomePage user={user} />} />
-        <Route path="account" element={<AccountPage user={user} />} />
-        <Route path="cart" element={<CartPage user={user} />} />
-        <Route path="*" element={<Navigate to="home" />} />
-      </Routes>
+  <Route path="" element={<Navigate to="modules" />} />
+  <Route path="modules" element={<ModulesPage />} />
+  <Route path="modules/:moduleId/categories" element={<CategoriesPage />} />
+  <Route path="modules/:moduleId/categories/:categoryId/products" element={<ProductsPage />} />
+  <Route path="home" element={<HomePage user={user} />} />
+  <Route path="account" element={<AccountPage user={user} />} />
+  <Route path="cart" element={<CartPage />} />
+  <Route path="*" element={<Navigate to="modules" />} />
+</Routes>
+
     </div>
   );
 }
