@@ -2,33 +2,35 @@ import React, { useState } from "react";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-function LoginPage({ switchToSignup, onLogin }) {
+function SignupPage({ switchToLogin }) {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
     setMessage("");
     setLoading(true);
 
     try {
-      const res = await fetch(`${API_URL}/api/auth/login`, {
+      const res = await fetch(`${API_URL}/api/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ name, email, password }),
       });
 
       const data = await res.json();
-      console.log("Login response:", res.status, data);
+
+      console.log("Signup response:", res.status, data); // log for debugging
 
       if (!res.ok) {
-        setMessage(data.message || "Login failed");
+        // If backend returns error, show message
+        setMessage(data.message || "Signup failed");
       } else {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
-        onLogin(data.user);
+        setMessage("✅ Signup successful! Redirecting to login...");
+        setTimeout(() => switchToLogin(), 2000);
       }
     } catch (err) {
       console.error("Network error:", err);
@@ -40,72 +42,63 @@ function LoginPage({ switchToSignup, onLogin }) {
 
   return (
     <div style={{
-      minHeight: "100vh",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-      fontFamily: "Arial, sans-serif"
+      background: "#fff",
+      padding: "40px",
+      borderRadius: "12px",
+      boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
+      width: "100%",
+      maxWidth: "400px",
+      textAlign: "center"
     }}>
-      <div style={{
-        background: "#fff",
-        padding: "40px",
-        borderRadius: "16px",
-        boxShadow: "0 8px 20px rgba(0,0,0,0.2)",
-        width: "100%",
-        maxWidth: "400px",
-        textAlign: "center"
-      }}>
-        <h2 style={{ marginBottom: "20px", color: "#764ba2" }}>Login</h2>
-        <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={inputStyle}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={inputStyle}
-          />
-          <button type="submit" disabled={loading} style={buttonStyle}>
-            {loading ? "Logging in..." : "Login"}
-          </button>
-        </form>
+      <h2 style={{ marginBottom: "20px" }}>Sign Up</h2>
+      <form onSubmit={handleSignup} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+        <input
+          type="text"
+          placeholder="Full Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          style={{ padding: "12px", borderRadius: "8px", border: "1px solid #ccc" }}
+        />
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          style={{ padding: "12px", borderRadius: "8px", border: "1px solid #ccc" }}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          style={{ padding: "12px", borderRadius: "8px", border: "1px solid #ccc" }}
+        />
+        <button
+          type="submit"
+          disabled={loading}
+          style={{
+            padding: "12px",
+            borderRadius: "8px",
+            border: "none",
+            background: "#4CAF50",
+            color: "#fff",
+            cursor: loading ? "not-allowed" : "pointer"
+          }}
+        >
+          {loading ? "Signing up..." : "Sign Up"}
+        </button>
+      </form>
 
-        {message && <p style={{ marginTop: "15px", color: message.includes("success") ? "green" : "red" }}>{message}</p>}
+      {message && <p style={{ marginTop: "15px", color: message.includes("successful") ? "green" : "red" }}>{message}</p>}
 
-        <p style={{ marginTop: "15px" }}>
-          Don't have an account? <button onClick={switchToSignup} style={{ color: "#764ba2", border: "none", background: "none", cursor: "pointer" }}>Sign Up</button>
-        </p>
-      </div>
+      <p style={{ marginTop: "15px" }}>
+        Already have an account? <button onClick={switchToLogin} style={{ color: "#4CAF50", border: "none", background: "none", cursor: "pointer" }}>Login</button>
+      </p>
     </div>
   );
 }
 
-const inputStyle = {
-  padding: "12px",
-  borderRadius: "12px",
-  border: "1px solid #ccc",
-  fontSize: "16px",
-};
-
-const buttonStyle = {
-  padding: "12px",
-  borderRadius: "12px",
-  border: "none",
-  background: "#764ba2",
-  color: "#fff",
-  fontWeight: "bold",
-  cursor: "pointer",
-  boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
-  transition: "0.2s"
-};
-
-export default LoginPage;
+export default SignupPage;
