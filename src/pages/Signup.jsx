@@ -4,11 +4,33 @@ function SignupPage({ switchToLogin }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
-    // Call backend signup API
-    console.log("Signing up:", { name, email, password });
+    setError("");
+    setSuccess("");
+
+    try {
+      const res = await fetch("https://your-backend.com/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.message || "Signup failed");
+      } else {
+        setSuccess("Signup successful! You can now login.");
+        // Optionally, switch to login page automatically
+        setTimeout(() => switchToLogin(), 2000);
+      }
+    } catch (err) {
+      setError("Network error. Please try again.");
+    }
   };
 
   return (
@@ -51,6 +73,10 @@ function SignupPage({ switchToLogin }) {
           Sign Up
         </button>
       </form>
+
+      {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}
+      {success && <p style={{ color: "green", marginTop: "10px" }}>{success}</p>}
+
       <p style={{ marginTop: "15px" }}>
         Already have an account? <button onClick={switchToLogin} style={{ color: "#4CAF50", border: "none", background: "none", cursor: "pointer" }}>Login</button>
       </p>
@@ -59,3 +85,4 @@ function SignupPage({ switchToLogin }) {
 }
 
 export default SignupPage;
+
