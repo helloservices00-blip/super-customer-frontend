@@ -1,13 +1,12 @@
-import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Profile from "./pages/Profile";
 import Products from "./pages/Products";
 
-export default function App() {
+function App() {
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
@@ -15,6 +14,8 @@ export default function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/products" element={<Products />} />
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
 }
+
+export default App;
