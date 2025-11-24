@@ -1,30 +1,46 @@
+// src/api/api.js
 import { BASE_URL } from "./config";
 
-// 1. Modules
+/**
+ * Note: backend endpoints used:
+ * GET  /api/modules
+ * GET  /api/vendors?module=<moduleId>
+ * GET  /api/categories?module=<moduleId>&vendor=<vendorId>
+ * GET  /api/products?module=<moduleId>&vendor=<vendorId>&category=<categoryId>
+ */
+
+async function handleFetch(res) {
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`API error ${res.status}: ${text || res.statusText}`);
+  }
+  return res.json();
+}
+
 export const fetchModules = async () => {
   const res = await fetch(`${BASE_URL}/api/modules`);
-  return res.json();
+  return handleFetch(res);
 };
 
-// 2. Vendors by module
 export const fetchVendors = async (moduleId) => {
-  const res = await fetch(`${BASE_URL}/api/vendors?module=${moduleId}`);
-  return res.json();
+  const url = `${BASE_URL}/api/vendors${moduleId ? `?module=${moduleId}` : ""}`;
+  const res = await fetch(url);
+  return handleFetch(res);
 };
 
-// 3. Categories by module + vendor
 export const fetchCategories = async (moduleId, vendorId) => {
-  const res = await fetch(`${BASE_URL}/api/categories?module=${moduleId}&vendor=${vendorId}`);
-  return res.json();
+  const params = new URLSearchParams();
+  if (moduleId) params.append("module", moduleId);
+  if (vendorId) params.append("vendor", vendorId);
+  const res = await fetch(`${BASE_URL}/api/categories?${params.toString()}`);
+  return handleFetch(res);
 };
 
-// ❌ REMOVE SUBCATEGORY — you don’t have it in backend
-// export const fetchSubcategories = async () => {};
-
-// 4. Products by module + vendor + category
 export const fetchProducts = async (moduleId, vendorId, categoryId) => {
-  const res = await fetch(
-    `${BASE_URL}/api/products?module=${moduleId}&vendor=${vendorId}&category=${categoryId}`
-  );
-  return res.json();
+  const params = new URLSearchParams();
+  if (moduleId) params.append("module", moduleId);
+  if (vendorId) params.append("vendor", vendorId);
+  if (categoryId) params.append("category", categoryId);
+  const res = await fetch(`${BASE_URL}/api/products?${params.toString()}`);
+  return handleFetch(res);
 };
