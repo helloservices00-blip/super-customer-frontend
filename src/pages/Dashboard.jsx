@@ -12,7 +12,6 @@ import ProductsPage from "./ProductsPage";
 
 export default function Dashboard({ user, onLogout }) {
   const location = useLocation();
-  const path = location.pathname.split("/")[2]; // dashboard/:page
   const [menuOpen, setMenuOpen] = useState(false);
 
   const navItems = [
@@ -21,6 +20,12 @@ export default function Dashboard({ user, onLogout }) {
     { name: "account", icon: <FiUser />, label: "Account" },
     { name: "cart", icon: <FiShoppingCart />, label: "Cart" },
   ];
+
+  // Function to check if a nav item is active
+  const isActive = (itemName) => {
+    // If current URL contains the nav item name, mark as active
+    return location.pathname.includes(`/${itemName}`);
+  };
 
   return (
     <div style={{ minHeight: "100vh", fontFamily: "Arial,sans-serif", background: "linear-gradient(135deg,#f6d365,#fda085)", padding: "20px" }}>
@@ -42,8 +47,8 @@ export default function Dashboard({ user, onLogout }) {
                 to={item.name}
                 style={{
                   ...navBtnStyle,
-                  background: path === item.name ? "#4CAF50" : "#fff",
-                  color: path === item.name ? "#fff" : "#4CAF50",
+                  background: isActive(item.name) ? "#4CAF50" : "#fff",
+                  color: isActive(item.name) ? "#fff" : "#4CAF50",
                 }}
                 onClick={() => setMenuOpen(false)}
               >
@@ -64,8 +69,8 @@ export default function Dashboard({ user, onLogout }) {
               to={item.name}
               style={{
                 ...navBtnStyle,
-                background: path === item.name ? "#4CAF50" : "#fff",
-                color: path === item.name ? "#fff" : "#4CAF50",
+                background: isActive(item.name) ? "#4CAF50" : "#fff",
+                color: isActive(item.name) ? "#fff" : "#4CAF50",
               }}
             >
               {item.icon} <span style={{ marginLeft: "6px" }}>{item.label}</span>
