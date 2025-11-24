@@ -3,20 +3,20 @@ import React, { useState } from "react";
 import { Routes, Route, Link, useLocation, Navigate } from "react-router-dom";
 import { FiHome, FiUser, FiShoppingCart, FiLogOut, FiMenu, FiX, FiGrid } from "react-icons/fi";
 
-// Pages (make sure all exist and are default exports)
-import HomePage from "./HomePage";
-import AccountPage from "./AccountPage";
-import CartPage from "./CartPage";
-import ModulesPage from "./ModulesPage";
-import CategoriesPage from "./CategoriesPage";
-import ProductsPage from "./ProductsPage";
+// Placeholder pages (safe defaults)
+const HomePage = ({ user }) => <div style={{ color: "#fff" }}>Home Page for {user?.name || "User"}</div>;
+const AccountPage = ({ user }) => <div style={{ color: "#fff" }}>Account Page for {user?.name || "User"}</div>;
+const CartPage = () => <div style={{ color: "#fff" }}>Cart Page</div>;
+const ModulesPage = () => <div style={{ color: "#fff" }}>Modules Page</div>;
+const CategoriesPage = () => <div style={{ color: "#fff" }}>Categories Page</div>;
+const ProductsPage = () => <div style={{ color: "#fff" }}>Products Page</div>;
 
-// Error boundary component
+// Error boundary
 function ErrorBoundary({ children }) {
   const [error, setError] = React.useState(null);
   if (error) return <div style={{ color: "red" }}>Error: {error.message}</div>;
   return (
-    <React.Suspense fallback={<div style={{color:"white"}}>Loading...</div>}>
+    <React.Suspense fallback={<div style={{ color: "#fff" }}>Loading...</div>}>
       {React.cloneElement(children, { setError })}
     </React.Suspense>
   );
@@ -33,7 +33,6 @@ export default function Dashboard({ user, onLogout }) {
     { name: "cart", icon: <FiShoppingCart />, label: "Cart" },
   ];
 
-  // Detect active nav item even for nested routes
   const isActive = (itemName) => location.pathname.includes(`/${itemName}`);
 
   return (
@@ -109,16 +108,13 @@ export default function Dashboard({ user, onLogout }) {
         </div>
       </nav>
 
-      {/* Nested Routes with error boundary */}
+      {/* Routes */}
       <ErrorBoundary>
         <Routes>
           <Route path="" element={<Navigate to="modules" />} />
           <Route path="modules" element={<ModulesPage />} />
           <Route path="modules/:moduleId/categories" element={<CategoriesPage />} />
-          <Route
-            path="modules/:moduleId/categories/:categoryId/products"
-            element={<ProductsPage />}
-          />
+          <Route path="modules/:moduleId/categories/:categoryId/products" element={<ProductsPage />} />
           <Route path="home" element={<HomePage user={user} />} />
           <Route path="account" element={<AccountPage user={user} />} />
           <Route path="cart" element={<CartPage />} />
