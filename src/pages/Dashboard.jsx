@@ -3,12 +3,24 @@ import React, { useState } from "react";
 import { Routes, Route, Link, useLocation, Navigate } from "react-router-dom";
 import { FiHome, FiUser, FiShoppingCart, FiLogOut, FiMenu, FiX, FiGrid } from "react-icons/fi";
 
+// Pages (make sure all exist and are default exports)
 import HomePage from "./HomePage";
 import AccountPage from "./AccountPage";
 import CartPage from "./CartPage";
 import ModulesPage from "./ModulesPage";
 import CategoriesPage from "./CategoriesPage";
 import ProductsPage from "./ProductsPage";
+
+// Error boundary component
+function ErrorBoundary({ children }) {
+  const [error, setError] = React.useState(null);
+  if (error) return <div style={{ color: "red" }}>Error: {error.message}</div>;
+  return (
+    <React.Suspense fallback={<div style={{color:"white"}}>Loading...</div>}>
+      {React.cloneElement(children, { setError })}
+    </React.Suspense>
+  );
+}
 
 export default function Dashboard({ user, onLogout }) {
   const location = useLocation();
@@ -21,15 +33,18 @@ export default function Dashboard({ user, onLogout }) {
     { name: "cart", icon: <FiShoppingCart />, label: "Cart" },
   ];
 
-  // Function to check if a nav item is active
-  const isActive = (itemName) => {
-    // If current URL contains the nav item name, mark as active
-    return location.pathname.includes(`/${itemName}`);
-  };
+  // Detect active nav item even for nested routes
+  const isActive = (itemName) => location.pathname.includes(`/${itemName}`);
 
   return (
-    <div style={{ minHeight: "100vh", fontFamily: "Arial,sans-serif", background: "linear-gradient(135deg,#f6d365,#fda085)", padding: "20px" }}>
-      
+    <div
+      style={{
+        minHeight: "100vh",
+        fontFamily: "Arial,sans-serif",
+        background: "linear-gradient(135deg,#f6d365,#fda085)",
+        padding: "20px",
+      }}
+    >
       {/* Navbar */}
       <nav style={navStyle}>
         <h2 style={{ color: "#4CAF50" }}>Multi-Vendor App</h2>
@@ -40,8 +55,14 @@ export default function Dashboard({ user, onLogout }) {
             {menuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
           </button>
 
-          <div style={{ ...navLinksStyleMobile, display: menuOpen ? "flex" : "none", flexDirection: "column" }}>
-            {navItems.map(item => (
+          <div
+            style={{
+              ...navLinksStyleMobile,
+              display: menuOpen ? "flex" : "none",
+              flexDirection: "column",
+            }}
+          >
+            {navItems.map((item) => (
               <Link
                 key={item.name}
                 to={item.name}
@@ -55,7 +76,10 @@ export default function Dashboard({ user, onLogout }) {
                 {item.icon} <span style={{ marginLeft: "6px" }}>{item.label}</span>
               </Link>
             ))}
-            <button onClick={onLogout} style={{ ...navBtnStyle, background: "#f44336", color: "#fff" }}>
+            <button
+              onClick={onLogout}
+              style={{ ...navBtnStyle, background: "#f44336", color: "#fff" }}
+            >
               <FiLogOut /> <span style={{ marginLeft: "6px" }}>Logout</span>
             </button>
           </div>
@@ -63,7 +87,7 @@ export default function Dashboard({ user, onLogout }) {
 
         {/* Desktop nav */}
         <div style={navLinksStyleDesktop}>
-          {navItems.map(item => (
+          {navItems.map((item) => (
             <Link
               key={item.name}
               to={item.name}
@@ -76,23 +100,31 @@ export default function Dashboard({ user, onLogout }) {
               {item.icon} <span style={{ marginLeft: "6px" }}>{item.label}</span>
             </Link>
           ))}
-          <button onClick={onLogout} style={{ ...navBtnStyle, background: "#f44336", color: "#fff" }}>
+          <button
+            onClick={onLogout}
+            style={{ ...navBtnStyle, background: "#f44336", color: "#fff" }}
+          >
             <FiLogOut /> <span style={{ marginLeft: "6px" }}>Logout</span>
           </button>
         </div>
       </nav>
 
-      {/* Nested Routes */}
-      <Routes>
-        <Route path="" element={<Navigate to="modules" />} />
-        <Route path="modules" element={<ModulesPage />} />
-        <Route path="modules/:moduleId/categories" element={<CategoriesPage />} />
-        <Route path="modules/:moduleId/categories/:categoryId/products" element={<ProductsPage />} />
-        <Route path="home" element={<HomePage user={user} />} />
-        <Route path="account" element={<AccountPage user={user} />} />
-        <Route path="cart" element={<CartPage />} />
-        <Route path="*" element={<Navigate to="modules" />} />
-      </Routes>
+      {/* Nested Routes with error boundary */}
+      <ErrorBoundary>
+        <Routes>
+          <Route path="" element={<Navigate to="modules" />} />
+          <Route path="modules" element={<ModulesPage />} />
+          <Route path="modules/:moduleId/categories" element={<CategoriesPage />} />
+          <Route
+            path="modules/:moduleId/categories/:categoryId/products"
+            element={<ProductsPage />}
+          />
+          <Route path="home" element={<HomePage user={user} />} />
+          <Route path="account" element={<AccountPage user={user} />} />
+          <Route path="cart" element={<CartPage />} />
+          <Route path="*" element={<Navigate to="modules" />} />
+        </Routes>
+      </ErrorBoundary>
     </div>
   );
 }
