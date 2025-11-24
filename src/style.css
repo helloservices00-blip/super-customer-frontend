@@ -1,0 +1,19 @@
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #f4f4f4;
+}
+
+.card {
+  padding: 16px;
+  background: white;
+  border-radius: 12px;
+  margin: 10px 0;
+}
+
+.select-box {
+  padding: 10px;
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
