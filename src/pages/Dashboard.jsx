@@ -3,24 +3,13 @@ import React, { useState } from "react";
 import { Routes, Route, Link, useLocation, Navigate } from "react-router-dom";
 import { FiHome, FiUser, FiShoppingCart, FiLogOut, FiMenu, FiX, FiGrid } from "react-icons/fi";
 
-// Placeholder pages (safe defaults)
+// Safe placeholders for pages
 const HomePage = ({ user }) => <div style={{ color: "#fff" }}>Home Page for {user?.name || "User"}</div>;
 const AccountPage = ({ user }) => <div style={{ color: "#fff" }}>Account Page for {user?.name || "User"}</div>;
 const CartPage = () => <div style={{ color: "#fff" }}>Cart Page</div>;
 const ModulesPage = () => <div style={{ color: "#fff" }}>Modules Page</div>;
 const CategoriesPage = () => <div style={{ color: "#fff" }}>Categories Page</div>;
 const ProductsPage = () => <div style={{ color: "#fff" }}>Products Page</div>;
-
-// Error boundary
-function ErrorBoundary({ children }) {
-  const [error, setError] = React.useState(null);
-  if (error) return <div style={{ color: "red" }}>Error: {error.message}</div>;
-  return (
-    <React.Suspense fallback={<div style={{ color: "#fff" }}>Loading...</div>}>
-      {React.cloneElement(children, { setError })}
-    </React.Suspense>
-  );
-}
 
 export default function Dashboard({ user, onLogout }) {
   const location = useLocation();
@@ -33,17 +22,10 @@ export default function Dashboard({ user, onLogout }) {
     { name: "cart", icon: <FiShoppingCart />, label: "Cart" },
   ];
 
-  const isActive = (itemName) => location.pathname.includes(`/${itemName}`);
+  const isActive = (name) => location.pathname.includes(`/${name}`);
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        fontFamily: "Arial,sans-serif",
-        background: "linear-gradient(135deg,#f6d365,#fda085)",
-        padding: "20px",
-      }}
-    >
+    <div style={{ minHeight: "100vh", fontFamily: "Arial,sans-serif", background: "linear-gradient(135deg,#f6d365,#fda085)", padding: "20px" }}>
       {/* Navbar */}
       <nav style={navStyle}>
         <h2 style={{ color: "#4CAF50" }}>Multi-Vendor App</h2>
@@ -54,31 +36,18 @@ export default function Dashboard({ user, onLogout }) {
             {menuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
           </button>
 
-          <div
-            style={{
-              ...navLinksStyleMobile,
-              display: menuOpen ? "flex" : "none",
-              flexDirection: "column",
-            }}
-          >
+          <div style={{ ...navLinksStyleMobile, display: menuOpen ? "flex" : "none", flexDirection: "column" }}>
             {navItems.map((item) => (
               <Link
                 key={item.name}
                 to={item.name}
-                style={{
-                  ...navBtnStyle,
-                  background: isActive(item.name) ? "#4CAF50" : "#fff",
-                  color: isActive(item.name) ? "#fff" : "#4CAF50",
-                }}
+                style={{ ...navBtnStyle, background: isActive(item.name) ? "#4CAF50" : "#fff", color: isActive(item.name) ? "#fff" : "#4CAF50" }}
                 onClick={() => setMenuOpen(false)}
               >
                 {item.icon} <span style={{ marginLeft: "6px" }}>{item.label}</span>
               </Link>
             ))}
-            <button
-              onClick={onLogout}
-              style={{ ...navBtnStyle, background: "#f44336", color: "#fff" }}
-            >
+            <button onClick={onLogout} style={{ ...navBtnStyle, background: "#f44336", color: "#fff" }}>
               <FiLogOut /> <span style={{ marginLeft: "6px" }}>Logout</span>
             </button>
           </div>
@@ -90,37 +59,28 @@ export default function Dashboard({ user, onLogout }) {
             <Link
               key={item.name}
               to={item.name}
-              style={{
-                ...navBtnStyle,
-                background: isActive(item.name) ? "#4CAF50" : "#fff",
-                color: isActive(item.name) ? "#fff" : "#4CAF50",
-              }}
+              style={{ ...navBtnStyle, background: isActive(item.name) ? "#4CAF50" : "#fff", color: isActive(item.name) ? "#fff" : "#4CAF50" }}
             >
               {item.icon} <span style={{ marginLeft: "6px" }}>{item.label}</span>
             </Link>
           ))}
-          <button
-            onClick={onLogout}
-            style={{ ...navBtnStyle, background: "#f44336", color: "#fff" }}
-          >
+          <button onClick={onLogout} style={{ ...navBtnStyle, background: "#f44336", color: "#fff" }}>
             <FiLogOut /> <span style={{ marginLeft: "6px" }}>Logout</span>
           </button>
         </div>
       </nav>
 
       {/* Routes */}
-      <ErrorBoundary>
-        <Routes>
-          <Route path="" element={<Navigate to="modules" />} />
-          <Route path="modules" element={<ModulesPage />} />
-          <Route path="modules/:moduleId/categories" element={<CategoriesPage />} />
-          <Route path="modules/:moduleId/categories/:categoryId/products" element={<ProductsPage />} />
-          <Route path="home" element={<HomePage user={user} />} />
-          <Route path="account" element={<AccountPage user={user} />} />
-          <Route path="cart" element={<CartPage />} />
-          <Route path="*" element={<Navigate to="modules" />} />
-        </Routes>
-      </ErrorBoundary>
+      <Routes>
+        <Route path="" element={<Navigate to="modules" />} />
+        <Route path="modules" element={<ModulesPage />} />
+        <Route path="modules/:moduleId/categories" element={<CategoriesPage />} />
+        <Route path="modules/:moduleId/categories/:categoryId/products" element={<ProductsPage />} />
+        <Route path="home" element={<HomePage user={user} />} />
+        <Route path="account" element={<AccountPage user={user} />} />
+        <Route path="cart" element={<CartPage />} />
+        <Route path="*" element={<Navigate to="modules" />} />
+      </Routes>
     </div>
   );
 }
