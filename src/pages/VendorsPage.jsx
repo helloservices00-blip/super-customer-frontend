@@ -1,51 +1,25 @@
-// src/pages/VendorsPage.jsx
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { useParams, useNavigate } from "react-router-dom";
+import { fetchVendors } from "../api/api";
+import { Link, useParams } from "react-router-dom";
 
-const API_URL = "https://super-backend-bzin.onrender.com";
-
-const VendorsPage = () => {
+export default function VendorsPage() {
   const { moduleId } = useParams();
   const [vendors, setVendors] = useState([]);
-  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchVendors = async () => {
-      try {
-        const res = await axios.get(`${API_URL}/api/vendors?module=${moduleId}`);
-        setVendors(res.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchVendors();
+    fetchVendors(moduleId).then(setVendors);
   }, [moduleId]);
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Vendors</h1>
-      <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
-        {vendors.map((vendor) => (
-          <div
-            key={vendor._id}
-            style={{
-              padding: "15px",
-              border: "1px solid #ccc",
-              borderRadius: "8px",
-              minWidth: "150px",
-              textAlign: "center",
-              cursor: "pointer",
-              backgroundColor: "#fff0f5",
-            }}
-            onClick={() => navigate(`/vendors/${vendor._id}/categories`)}
-          >
-            {vendor.name}
+    <div>
+      <h2>Vendors</h2>
+      {vendors.map(v => (
+        <Link key={v._id} to={`/dashboard/categories/${moduleId}/${v._id}`}>
+          <div style={{ padding: 10, margin: 10, background: "#ddd", borderRadius: 8 }}>
+            {v.name}
           </div>
-        ))}
-      </div>
+        </Link>
+      ))}
     </div>
   );
-};
-
-export default VendorsPage;
+}
