@@ -1,12 +1,14 @@
+// src/pages/Dashboard.jsx
 import React, { useState } from "react";
 import { Routes, Route, Link, useLocation, Navigate } from "react-router-dom";
 import { FiHome, FiUser, FiShoppingCart, FiLogOut, FiMenu, FiX, FiGrid } from "react-icons/fi";
-import HomePage from "./HomePage.jsx";
-import AccountPage from "./AccountPage.jsx";
-import CartPage from "./CartPage.jsx";
-import ModulesPage from "./ModulesPage.jsx";
-import CategoriesPage from "./CategoriesPage.jsx";
-import ProductsPage from "./ProductsPage.jsx";
+
+import HomePage from "./HomePage";
+import AccountPage from "./AccountPage";
+import CartPage from "./CartPage";
+import ModulesPage from "./ModulesPage";
+import CategoriesPage from "./CategoriesPage";
+import ProductsPage from "./ProductsPage";
 
 export default function Dashboard({ user, onLogout }) {
   const location = useLocation();
@@ -22,6 +24,8 @@ export default function Dashboard({ user, onLogout }) {
 
   return (
     <div style={{ minHeight: "100vh", fontFamily: "Arial,sans-serif", background: "linear-gradient(135deg,#f6d365,#fda085)", padding: "20px" }}>
+      
+      {/* Navbar */}
       <nav style={navStyle}>
         <h2 style={{ color: "#4CAF50" }}>Multi-Vendor App</h2>
 
@@ -73,6 +77,7 @@ export default function Dashboard({ user, onLogout }) {
         </div>
       </nav>
 
+      {/* Nested Routes */}
       <Routes>
         <Route path="" element={<Navigate to="modules" />} />
         <Route path="modules" element={<ModulesPage />} />
@@ -87,6 +92,7 @@ export default function Dashboard({ user, onLogout }) {
   );
 }
 
+/* Styles */
 const navStyle = {
   display: "flex",
   justifyContent: "space-between",
